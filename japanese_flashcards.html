@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日文單字字卡</title>
+<style>
+:root{
+  --bg:#f8f8f6;--card:#ffffff;--border:#e0dfd8;--text:#1a1a18;
+  --muted:#9a9a94;--secondary:#6b6b66;--accent:#2f6fed;--accent-bg:#eaf1fd;
+  --success:#1a9254;--success-bg:#e6f6ee;--danger:#c9483f;--danger-bg:#fbeceb;
+  --radius:10px;--surface:#f1efe8;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#151513;--card:#1f1f1d;--border:#3a3a36;--text:#f2f2ee;
+    --muted:#87877f;--secondary:#b3b3ad;--accent:#6ea8ff;--accent-bg:#1c2b45;
+    --success:#4cc48a;--success-bg:#173829;--danger:#ef6a63;--danger-bg:#3a1f1e;
+    --surface:#2a2a27;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px 16px 60px;}
+.wrap{max-width:480px;margin:0 auto;}
+h1{font-size:20px;font-weight:600;margin-bottom:4px;}
+.sub{font-size:13px;color:var(--secondary);margin-bottom:20px;}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+select{flex:1;min-width:160px;padding:9px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;}
+.seg{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;flex:1;min-width:160px;}
+.seg button{flex:1;border:none;background:var(--card);color:var(--secondary);padding:9px 6px;cursor:pointer;font-size:12px;transition:background .15s,color .15s;}
+.seg button.on{background:var(--accent-bg);color:var(--accent);font-weight:600;}
+.topbar{display:flex;align-items:center;gap:10px;margin:14px 0 10px;}
+.prog{flex:1;height:6px;background:var(--surface);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .25s;}
+.cnt{font-size:12px;color:var(--secondary);min-width:46px;text-align:right;}
+.stage{position:relative;height:260px;margin-bottom:14px;}
+.card{position:absolute;inset:0;background:var(--card);border:1px solid var(--border);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;cursor:pointer;touch-action:pan-y;user-select:none;}
+.tag{position:absolute;top:12px;left:14px;font-size:11px;color:var(--muted);background:var(--surface);padding:3px 10px;border-radius:99px;}
+.speak-btn{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0;}
+.front{font-size:32px;font-weight:600;text-align:center;line-height:1.3;}
+.front-sub{font-size:14px;color:var(--muted);text-align:center;}
+.back{font-size:20px;color:var(--accent);text-align:center;min-height:28px;}
+.hint{font-size:11px;color:var(--muted);}
+.swipe-hint{position:absolute;bottom:14px;display:flex;gap:20px;font-size:11px;color:var(--muted);}
+.btns{display:flex;gap:10px;margin-bottom:22px;}
+.btns button{flex:1;padding:13px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);font-size:14px;font-weight:500;cursor:pointer;transition:background .15s;}
+.btn-no{color:var(--danger);border-color:var(--danger-bg);}
+.btn-yes{color:var(--success);border-color:var(--success-bg);}
+.empty{text-align:center;padding:60px 0;color:var(--muted);font-size:14px;}
+.done-box{text-align:center;padding:2rem 0;}
+.done-title{font-size:18px;font-weight:600;margin-bottom:16px;}
+.stat-row{display:flex;justify-content:center;gap:14px;margin-bottom:18px;}
+.stat{background:var(--surface);border-radius:var(--radius);padding:12px 20px;min-width:96px;}
+.stat p{font-size:12px;color:var(--secondary);}
+.stat span{display:block;font-size:26px;font-weight:600;margin-top:3px;}
+.done-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.done-btns button{padding:10px 16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);font-size:13px;cursor:pointer;}
+hr{border:none;border-top:1px solid var(--border);margin:20px 0;}
+.panel-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:2px 0;}
+.panel-head h2{font-size:14px;font-weight:600;}
+.panel-head .tog{font-size:12px;color:var(--muted);}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+.mini-stat{background:var(--surface);border-radius:var(--radius);padding:10px 14px;}
+.mini-stat p{font-size:11px;color:var(--secondary);}
+.mini-stat span{display:block;font-size:20px;font-weight:600;margin-top:3px;}
+.cat-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);}
+.cat-row:last-of-type{border-bottom:none;}
+.cat-name{min-width:56px;color:var(--secondary);}
+.mbar{flex:1;height:5px;background:var(--surface);border-radius:99px;overflow:hidden;}
+.mbar-fill{height:100%;background:var(--success);border-radius:99px;}
+.cat-num{min-width:36px;text-align:right;color:var(--muted);}
+.exp-btn{display:block;margin-top:12px;font-size:12px;color:var(--accent);background:none;border:1px solid var(--accent-bg);padding:8px 12px;border-radius:var(--radius);cursor:pointer;width:100%;text-align:left;}
+textarea{width:100%;height:130px;margin-top:8px;font-size:11px;font-family:ui-monospace,monospace;padding:10px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);resize:vertical;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>日文單字字卡</h1>
+  <p class="sub" id="subEl">載入中…</p>
+  <div class="row">
+    <select id="chSel"></select>
+    <div class="seg" id="scopeSeg">
+      <button data-v="all" class="on">全部</button>
+      <button data-v="unknown">未記住</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="seg" id="frontSeg">
+      <button data-v="ja" class="on">正面：原文（假名）</button>
+      <button data-v="zh">正面：中文</button>
+    </div>
+  </div>
+  <div class="topbar">
+    <div class="prog"><div class="prog-fill" id="progFill"></div></div>
+    <div class="cnt" id="cntEl">0 / 0</div>
+  </div>
+  <div class="stage" id="stageEl"><div class="empty">載入中…</div></div>
+  <div class="btns" id="btnsEl" style="display:none">
+    <button class="btn-no" id="btnNo">✕ 還沒記住</button>
+    <button class="btn-yes" id="btnYes">✓ 記住了</button>
+  </div>
+  <div id="doneEl" style="display:none"></div>
+  <hr>
+  <div class="panel-head" id="statsHead">
+    <h2>學習狀況</h2>
+    <span class="tog" id="statsTog">展開 ▾</span>
+  </div>
+  <div id="statsBody" style="display:none"></div>
+</div>
+
+<script>
+const CHAPTERS = {
+  c1: {
+    label: '第1章　動詞・食物・生活',
+    words: [
+      {id:'c1_01',k:'します',j:'',z:'做',c:'動詞'},
+      {id:'c1_02',k:'あいます',j:'会います',z:'遇見；會見',c:'動詞'},
+      {id:'c1_03',k:'たべます',j:'食べます',z:'吃',c:'動詞'},
+      {id:'c1_04',k:'のみます',j:'飲みます',z:'喝',c:'動詞'},
+      {id:'c1_05',k:'うたいます',j:'歌います',z:'唱',c:'動詞'},
+      {id:'c1_06',k:'かいます',j:'買います',z:'買',c:'動詞'},
+      {id:'c1_07',k:'ききます',j:'聞きます',z:'聽',c:'動詞'},
+      {id:'c1_08',k:'よみます',j:'読みます',z:'讀；唸',c:'動詞'},
+      {id:'c1_09',k:'みます',j:'見ます',z:'看；觀看',c:'動詞'},
+      {id:'c1_10',k:'とります',j:'撮ります',z:'攝影；拍照',c:'動詞'},
+      {id:'c1_11',k:'かきます',j:'書きます',z:'寫；寫作',c:'動詞'},
+      {id:'c1_12',k:'ごはん',j:'御飯',z:'飯',c:'食物'},
+      {id:'c1_13',k:'パン',j:'',z:'麵包',c:'食物'},
+      {id:'c1_14',k:'たまご',j:'卵',z:'雞蛋',c:'食物'},
+      {id:'c1_15',k:'にく',j:'肉',z:'肉',c:'食物'},
+      {id:'c1_16',k:'やさい',j:'野菜',z:'青菜',c:'食物'},
+      {id:'c1_17',k:'さかな',j:'魚',z:'魚',c:'食物'},
+      {id:'c1_18',k:'くだもの',j:'果物',z:'水果',c:'食物'},
+      {id:'c1_19',k:'りんご',j:'林檎',z:'蘋果',c:'食物'},
+      {id:'c1_20',k:'コーヒー',j:'',z:'咖啡',c:'食物'},
+      {id:'c1_21',k:'こうちゃ',j:'紅茶',z:'紅茶',c:'食物'},
+      {id:'c1_22',k:'ぎゅうにゅう',j:'牛乳',z:'牛奶',c:'食物'},
+      {id:'c1_23',k:'ビール',j:'',z:'啤酒',c:'食物'},
+      {id:'c1_24',k:'みず',j:'水',z:'水',c:'食物'},
+      {id:'c1_25',k:'ジュース',j:'',z:'果汁',c:'食物'},
+      {id:'c1_26',k:'チーズ',j:'',z:'起司；乳酪',c:'食物'},
+      {id:'c1_27',k:'おさけ',j:'お酒',z:'酒；日本酒',c:'食物'},
+      {id:'c1_28',k:'ワイン',j:'',z:'洋酒；葡萄酒',c:'食物'},
+      {id:'c1_29',k:'メール',j:'',z:'電子信',c:'生活'},
+      {id:'c1_30',k:'パーティー',j:'',z:'宴會；茶會',c:'生活'},
+      {id:'c1_31',k:'ピンポン',j:'',z:'乒乓球',c:'生活'},
+      {id:'c1_32',k:'テレビ',j:'',z:'電視機',c:'生活'},
+      {id:'c1_33',k:'おんがく',j:'音楽',z:'音樂',c:'生活'},
+      {id:'c1_34',k:'しゃしん',j:'写真',z:'照片',c:'生活'},
+      {id:'c1_35',k:'てがみ',j:'手紙',z:'信',c:'生活'},
+      {id:'c1_36',k:'えいが',j:'映画',z:'電影；影片',c:'生活'},
+      {id:'c1_37',k:'いりぐち',j:'入り口',z:'入口',c:'生活'},
+      {id:'c1_38',k:'きっさてん',j:'喫茶店',z:'咖啡店',c:'生活'},
+      {id:'c1_39',k:'えいがかん',j:'映画館',z:'電影院',c:'生活'},
+      {id:'c1_40',k:'けさ',j:'今朝',z:'今晨',c:'時間'},
+      {id:'c1_41',k:'こんばん',j:'今晩',z:'今晚；今夜',c:'時間'},
+      {id:'c1_42',k:'なに',j:'何',z:'什麼',c:'時間'},
+      {id:'c1_43',k:'いっしょに',j:'一緒に',z:'一起',c:'時間'},
+      {id:'c1_44',k:'それから',j:'',z:'然後',c:'時間'},
+      {id:'c1_45',k:'もしもし',j:'',z:'喂，喂喂',c:'短句'},
+      {id:'c1_46',k:'こんばんは',j:'',z:'晚安（問候語）',c:'短句'},
+      {id:'c1_47',k:'いいですね',j:'',z:'好啊',c:'短句'},
+      {id:'c1_48',k:'わかりました',j:'',z:'知道了；明白了',c:'短句'},
+      {id:'c1_49',k:'またあした',j:'また明日',z:'明天見',c:'短句'},
+      {id:'c1_50',k:'ええ',j:'',z:'（肯定）啊、嗯',c:'短句'}
+    ]
+  }
+};
+
+const STORE_KEY = 'jp_vocab_prog_v1';
+let prog = {}, frontLang = 'ja', scope = 'all', chKey = 'c1';
+let deck = [], idx = 0, revealed = false, yesN = 0, noN = 0;
+let dragging = false, startX = 0, dragX = 0;
+let statsOpen = false;
+
+function loadProg() {
+  try { const s = localStorage.getItem(STORE_KEY); return s ? JSON.parse(s) : {}; }
+  catch(e) { return {}; }
+}
+function saveProg() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(prog)); } catch(e) {}
+}
+function shuffle(a) {
+  const b = a.slice();
+  for (let i = b.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]];
+  }
+  return b;
+}
+function words() { return CHAPTERS[chKey].words; }
+function statusOf(id) { return (prog[id] && prog[id].status) || 'unknown'; }
+function frontOf(w) { return frontLang === 'ja' ? w.k : w.z; }
+function subOf(w) { return frontLang === 'ja' && w.j ? w.j : ''; }
+function backOf(w) {
+  if (frontLang === 'ja') return w.z;
+  return w.j ? w.k + '（' + w.j + '）' : w.k;
+}
+
+function buildDeck() {
+  let ws = words();
+  if (scope === 'unknown') ws = ws.filter(w => statusOf(w.id) !== 'known');
+  deck = shuffle(ws); idx = 0; yesN = 0; noN = 0;
+  document.getElementById('doneEl').style.display = 'none';
+  document.getElementById('btnsEl').style.display = '';
+  render();
+  updateSub();
+}
+
+function updateSub() {
+  const ws = words();
+  const known = ws.filter(w => statusOf(w.id) === 'known').length;
+  document.getElementById('subEl').textContent =
+    CHAPTERS[chKey].label + '　已精通 ' + known + ' / ' + ws.length;
+}
+
+function updateTopbar() {
+  const n = deck.length;
+  document.getElementById('cntEl').textContent = Math.min(idx, n) + ' / ' + n;
+  document.getElementById('progFill').style.width = (n ? Math.round(idx/n*100) : 0) + '%';
+}
+
+function render() {
+  const st = document.getElementById('stageEl');
+  if (!deck.length) {
+    st.innerHTML = '<div class="empty">這個範圍沒有單字可以複習</div>';
+    document.getElementById('btnsEl').style.display = 'none';
+    updateTopbar(); return;
+  }
+  if (idx >= deck.length) { finish(); return; }
+  const w = deck[idx];
+  revealed = false;
+  st.innerHTML =
+    '<div class="card" id="theCard">' +
+      '<div class="tag">' + w.c + '</div>' +
+      '<button class="speak-btn" id="speakBtn" aria-label="播放發音">🔊</button>' +
+      '<div class="front" id="cardFront">' + frontOf(w) + '</div>' +
+      '<div class="front-sub" id="cardSub">' + subOf(w) + '</div>' +
+      '<div class="back" id="cardBack"></div>' +
+      '<div class="hint" id="cardHint">點卡片翻面</div>' +
+      '<div class="swipe-hint"><span>← 還沒記住</span><span>記住了 →</span></div>' +
+    '</div>';
+  updateTopbar();
+  attachCardEvents(w);
+}
+
+function reveal(w) {
+  if (revealed) return;
+  revealed = true;
+  document.getElementById('cardBack').textContent = backOf(w);
+  document.getElementById('cardHint').textContent = '左右滑動標記';
+}
+
+function markCard(status) {
+  const w = deck[idx];
+  const r = prog[w.id] || { status: 'unknown', correct: 0, wrong: 0 };
+  if (status === 'yes') { r.status = 'known'; r.correct = (r.correct||0)+1; yesN++; }
+  else { r.status = 'unknown'; r.wrong = (r.wrong||0)+1; noN++; }
+  r.last = new Date().toISOString();
+  prog[w.id] = r;
+  saveProg();
+  idx++;
+  render();
+  updateSub();
+  if (statsOpen) renderStats();
+}
+
+function finish() {
+  document.getElementById('stageEl').innerHTML = '';
+  document.getElementById('btnsEl').style.display = 'none';
+  updateTopbar();
+  const d = document.getElementById('doneEl');
+  d.style.display = '';
+  d.innerHTML =
+    '<div class="done-box">' +
+      '<div class="done-title">這輪複習完成！</div>' +
+      '<div class="stat-row">' +
+        '<div class="stat"><p>記住了</p><span>' + yesN + '</span></div>' +
+        '<div class="stat"><p>還沒記住</p><span>' + noN + '</span></div>' +
+      '</div>' +
+      '<div class="done-btns">' +
+        '<button id="rdAll">重新複習全部</button>' +
+        '<button id="rdUnk">只練還沒記住的</button>' +
+      '</div>' +
+    '</div>';
+  document.getElementById('rdAll').onclick = function(){ scope='all'; syncSeg('scopeSeg','all'); buildDeck(); };
+  document.getElementById('rdUnk').onclick = function(){ scope='unknown'; syncSeg('scopeSeg','unknown'); buildDeck(); };
+}
+
+function attachCardEvents(w) {
+  document.getElementById('speakBtn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(w.k);
+    u.lang = 'ja-JP'; u.rate = 0.85;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  });
+  const card = document.getElementById('theCard');
+  function dn(e) {
+    if (e.target.closest('#speakBtn')) return;
+    dragging=true; dragX=0; startX=(e.touches?e.touches[0].clientX:e.clientX);
+    card.style.transition='none';
+  }
+  function mv(e) {
+    if (!dragging) return;
+    dragX = (e.touches?e.touches[0].clientX:e.clientX) - startX;
+    card.style.transform = 'translateX('+dragX+'px) rotate('+(dragX/22)+'deg)';
+  }
+  function up() {
+    if (!dragging) return; dragging=false;
+    card.style.transition = 'transform .22s, opacity .22s';
+    if (dragX > 80) {
+      card.style.transform='translateX(500px) rotate(20deg)'; card.style.opacity='0';
+      setTimeout(()=>markCard('yes'), 200);
+    } else if (dragX < -80) {
+      card.style.transform='translateX(-500px) rotate(-20deg)'; card.style.opacity='0';
+      setTimeout(()=>markCard('no'), 200);
+    } else if (Math.abs(dragX) < 8) {
+      card.style.transform=''; reveal(w);
+    } else { card.style.transform=''; }
+    dragX=0;
+  }
+  card.addEventListener('pointerdown', dn);
+  card.addEventListener('pointermove', mv);
+  card.addEventListener('pointerup', up);
+  card.addEventListener('pointerleave', up);
+}
+
+function syncSeg(id, val) {
+  document.querySelectorAll('#'+id+' button').forEach(b => b.classList.toggle('on', b.dataset.v===val));
+}
+
+function renderStats() {
+  const body = document.getElementById('statsBody');
+  if (body.style.display === 'none') return;
+  const ws = words();
+  const known = ws.filter(w => statusOf(w.id)==='known').length;
+  const total = ws.length;
+  const cats = {};
+  ws.forEach(w => {
+    cats[w.c] = cats[w.c]||{known:0,total:0};
+    cats[w.c].total++;
+    if (statusOf(w.id)==='known') cats[w.c].known++;
+  });
+  let html =
+    '<div class="stat-grid">' +
+      '<div class="mini-stat"><p>已精通</p><span>'+known+'</span></div>' +
+      '<div class="mini-stat"><p>總單字數</p><span>'+total+'</span></div>' +
+    '</div>';
+  Object.keys(cats).forEach(cat => {
+    const c = cats[cat], pct = c.total?Math.round(c.known/c.total*100):0;
+    html += '<div class="cat-row"><span class="cat-name">'+cat+'</span>'+
+      '<div class="mbar"><div class="mbar-fill" style="width:'+pct+'%"></div></div>'+
+      '<span class="cat-num">'+c.known+'/'+c.total+'</span></div>';
+  });
+  html += '<button class="exp-btn" id="expBtn">📋 產生學習摘要（貼給 Claude 分析）</button>';
+  html += '<textarea id="expArea" style="display:none" readonly></textarea>';
+  body.innerHTML = html;
+  document.getElementById('expBtn').onclick = function() {
+    const ws2 = words();
+    const unk = ws2.filter(w => statusOf(w.id)!=='known');
+    let txt = '日文單字學習摘要\n';
+    txt += '產生時間：' + new Date().toLocaleString() + '\n';
+    txt += '章節：' + CHAPTERS[chKey].label + '\n\n';
+    txt += '已精通：' + known + ' / ' + total + '\n\n分類進度：\n';
+    Object.keys(cats).forEach(c => { txt += cats[c].known+'/'+cats[c].total+' '+c+'\n'; });
+    txt += '\n還沒記住的單字（'+unk.length+'個）：\n';
+    unk.forEach(w => { txt += '・'+w.k+(w.j?'（'+w.j+'）':'')+' → '+w.z+'\n'; });
+    const area = document.getElementById('expArea');
+    area.style.display = 'block'; area.value = txt; area.select();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(() => {
+        document.getElementById('expBtn').textContent = '✓ 已複製！貼進對話框就能分析';
+      });
+    }
+  };
+}
+
+document.getElementById('statsHead').addEventListener('click', function(){
+  statsOpen = !statsOpen;
+  const body = document.getElementById('statsBody');
+  body.style.display = statsOpen ? 'block' : 'none';
+  document.getElementById('statsTog').textContent = statsOpen ? '收起 ▴' : '展開 ▾';
+  if (statsOpen) renderStats();
+});
+
+document.getElementById('scopeSeg').addEventListener('click', function(e){
+  const b = e.target.closest('button'); if (!b) return;
+  scope = b.dataset.v; syncSeg('scopeSeg', scope); buildDeck();
+});
+document.getElementById('frontSeg').addEventListener('click', function(e){
+  const b = e.target.closest('button'); if (!b) return;
+  frontLang = b.dataset.v; syncSeg('frontSeg', frontLang); render();
+});
+document.getElementById('btnNo').addEventListener('click', ()=>markCard('no'));
+document.getElementById('btnYes').addEventListener('click', ()=>markCard('yes'));
+
+const chSel = document.getElementById('chSel');
+Object.keys(CHAPTERS).forEach(k=>{
+  const o = document.createElement('option');
+  o.value=k; o.textContent=CHAPTERS[k].label; chSel.appendChild(o);
+});
+chSel.value = chKey;
+chSel.addEventListener('change', function(){ chKey=this.value; buildDeck(); if(statsOpen)renderStats(); });
+
+prog = loadProg();
+buildDeck();
+</script>
+</body>
+</html>
