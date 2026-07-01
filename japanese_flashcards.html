@@ -36,14 +36,14 @@ select{flex:1;min-width:160px;padding:9px 12px;border-radius:var(--radius);borde
 .stage{position:relative;height:260px;margin-bottom:14px;}
 .card{position:absolute;inset:0;background:var(--card);border:1px solid var(--border);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;cursor:pointer;touch-action:pan-y;user-select:none;}
 .tag{position:absolute;top:12px;left:14px;font-size:11px;color:var(--muted);background:var(--surface);padding:3px 10px;border-radius:99px;}
-.speak-btn{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0;}
+.speak-btn{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;}
 .front{font-size:32px;font-weight:600;text-align:center;line-height:1.3;}
 .front-sub{font-size:14px;color:var(--muted);text-align:center;}
 .back{font-size:20px;color:var(--accent);text-align:center;min-height:28px;}
 .hint{font-size:11px;color:var(--muted);}
 .swipe-hint{position:absolute;bottom:14px;display:flex;gap:20px;font-size:11px;color:var(--muted);}
 .btns{display:flex;gap:10px;margin-bottom:22px;}
-.btns button{flex:1;padding:13px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);font-size:14px;font-weight:500;cursor:pointer;transition:background .15s;}
+.btns button{flex:1;padding:13px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);font-size:14px;font-weight:500;cursor:pointer;}
 .btn-no{color:var(--danger);border-color:var(--danger-bg);}
 .btn-yes{color:var(--success);border-color:var(--success-bg);}
 .empty{text-align:center;padding:60px 0;color:var(--muted);font-size:14px;}
@@ -63,14 +63,26 @@ hr{border:none;border-top:1px solid var(--border);margin:20px 0;}
 .mini-stat{background:var(--surface);border-radius:var(--radius);padding:10px 14px;}
 .mini-stat p{font-size:11px;color:var(--secondary);}
 .mini-stat span{display:block;font-size:20px;font-weight:600;margin-top:3px;}
-.cat-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);}
+.ch-section{margin-bottom:10px;}
+.ch-label{font-size:12px;font-weight:600;color:var(--secondary);margin:10px 0 4px;}
+.cat-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border);}
 .cat-row:last-of-type{border-bottom:none;}
 .cat-name{min-width:56px;color:var(--secondary);}
 .mbar{flex:1;height:5px;background:var(--surface);border-radius:99px;overflow:hidden;}
 .mbar-fill{height:100%;background:var(--success);border-radius:99px;}
 .cat-num{min-width:36px;text-align:right;color:var(--muted);}
 .exp-btn{display:block;margin-top:12px;font-size:12px;color:var(--accent);background:none;border:1px solid var(--accent-bg);padding:8px 12px;border-radius:var(--radius);cursor:pointer;width:100%;text-align:left;}
-textarea{width:100%;height:130px;margin-top:8px;font-size:11px;font-family:ui-monospace,monospace;padding:10px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);resize:vertical;}
+textarea.exp-area{width:100%;height:130px;margin-top:8px;font-size:11px;font-family:ui-monospace,monospace;padding:10px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);resize:vertical;}
+/* 匯入區塊 */
+.import-panel{margin-top:0;}
+.import-intro{font-size:12px;color:var(--secondary);margin-bottom:8px;line-height:1.6;}
+.import-area{width:100%;height:110px;font-size:11px;font-family:ui-monospace,monospace;padding:10px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);resize:vertical;display:block;margin-bottom:8px;}
+.import-btn{padding:9px 16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);font-size:13px;cursor:pointer;color:var(--accent);}
+.import-msg{font-size:12px;margin-top:6px;min-height:18px;}
+.import-msg.ok{color:var(--success);}
+.import-msg.err{color:var(--danger);}
+.del-btn{font-size:11px;color:var(--danger);background:none;border:none;cursor:pointer;margin-left:6px;opacity:.6;}
+.del-btn:hover{opacity:1;}
 </style>
 </head>
 <body>
@@ -100,18 +112,37 @@ textarea{width:100%;height:130px;margin-top:8px;font-size:11px;font-family:ui-mo
     <button class="btn-yes" id="btnYes">✓ 記住了</button>
   </div>
   <div id="doneEl" style="display:none"></div>
+
   <hr>
   <div class="panel-head" id="statsHead">
-    <h2>學習狀況</h2>
+    <h2>📊 學習狀況</h2>
     <span class="tog" id="statsTog">展開 ▾</span>
   </div>
   <div id="statsBody" style="display:none"></div>
+
+  <hr>
+  <div class="panel-head" id="importHead">
+    <h2>➕ 匯入新章節</h2>
+    <span class="tog" id="importTog">展開 ▾</span>
+  </div>
+  <div id="importBody" style="display:none">
+    <div class="import-panel">
+      <p class="import-intro">把 Claude 給你的 JSON 單字貼到下方，按「匯入」就會新增章節。不會影響已有的學習進度。</p>
+      <textarea class="import-area" id="importArea" placeholder='{"id":"c2","label":"第2章　XXX","words":[{"id":"c2_01","k":"あか","j":"赤","z":"紅色","c":"顏色"}]}'></textarea>
+      <button class="import-btn" id="importBtn">匯入章節</button>
+      <div class="import-msg" id="importMsg"></div>
+    </div>
+  </div>
 </div>
 
 <script>
-const CHAPTERS = {
+const STORE_KEY = 'jp_vocab_prog_v1';
+const CHAPTERS_KEY = 'jp_vocab_chapters_v1';
+
+const BUILTIN = {
   c1: {
     label: '第1章　動詞・食物・生活',
+    builtin: true,
     words: [
       {id:'c1_01',k:'します',j:'',z:'做',c:'動詞'},
       {id:'c1_02',k:'あいます',j:'会います',z:'遇見；會見',c:'動詞'},
@@ -167,18 +198,27 @@ const CHAPTERS = {
   }
 };
 
-const STORE_KEY = 'jp_vocab_prog_v1';
+let CHAPTERS = {};
 let prog = {}, frontLang = 'ja', scope = 'all', chKey = 'c1';
 let deck = [], idx = 0, revealed = false, yesN = 0, noN = 0;
 let dragging = false, startX = 0, dragX = 0;
-let statsOpen = false;
+let statsOpen = false, importOpen = false;
 
 function loadProg() {
-  try { const s = localStorage.getItem(STORE_KEY); return s ? JSON.parse(s) : {}; }
-  catch(e) { return {}; }
+  try { const s = localStorage.getItem(STORE_KEY); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
 }
 function saveProg() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(prog)); } catch(e) {}
+}
+function loadExtraChapters() {
+  try { const s = localStorage.getItem(CHAPTERS_KEY); return s ? JSON.parse(s) : {}; } catch(e) { return {}; }
+}
+function saveExtraChapters(extra) {
+  try { localStorage.setItem(CHAPTERS_KEY, JSON.stringify(extra)); } catch(e) {}
+}
+function mergeChapters() {
+  const extra = loadExtraChapters();
+  CHAPTERS = Object.assign({}, BUILTIN, extra);
 }
 function shuffle(a) {
   const b = a.slice();
@@ -187,13 +227,25 @@ function shuffle(a) {
   }
   return b;
 }
-function words() { return CHAPTERS[chKey].words; }
+function words() { return CHAPTERS[chKey] ? CHAPTERS[chKey].words : []; }
 function statusOf(id) { return (prog[id] && prog[id].status) || 'unknown'; }
 function frontOf(w) { return frontLang === 'ja' ? w.k : w.z; }
 function subOf(w) { return frontLang === 'ja' && w.j ? w.j : ''; }
 function backOf(w) {
   if (frontLang === 'ja') return w.z;
   return w.j ? w.k + '（' + w.j + '）' : w.k;
+}
+
+function rebuildChapterSelect() {
+  const sel = document.getElementById('chSel');
+  sel.innerHTML = '';
+  Object.keys(CHAPTERS).forEach(k => {
+    const o = document.createElement('option');
+    o.value = k; o.textContent = CHAPTERS[k].label;
+    sel.appendChild(o);
+  });
+  if (!CHAPTERS[chKey]) chKey = Object.keys(CHAPTERS)[0];
+  sel.value = chKey;
 }
 
 function buildDeck() {
@@ -210,7 +262,7 @@ function updateSub() {
   const ws = words();
   const known = ws.filter(w => statusOf(w.id) === 'known').length;
   document.getElementById('subEl').textContent =
-    CHAPTERS[chKey].label + '　已精通 ' + known + ' / ' + ws.length;
+    (CHAPTERS[chKey] ? CHAPTERS[chKey].label : '') + '　已精通 ' + known + ' / ' + ws.length;
 }
 
 function updateTopbar() {
@@ -303,12 +355,12 @@ function attachCardEvents(w) {
   }
   function mv(e) {
     if (!dragging) return;
-    dragX = (e.touches?e.touches[0].clientX:e.clientX) - startX;
-    card.style.transform = 'translateX('+dragX+'px) rotate('+(dragX/22)+'deg)';
+    dragX=(e.touches?e.touches[0].clientX:e.clientX)-startX;
+    card.style.transform='translateX('+dragX+'px) rotate('+(dragX/22)+'deg)';
   }
   function up() {
     if (!dragging) return; dragging=false;
-    card.style.transition = 'transform .22s, opacity .22s';
+    card.style.transition='transform .22s,opacity .22s';
     if (dragX > 80) {
       card.style.transform='translateX(500px) rotate(20deg)'; card.style.opacity='0';
       setTimeout(()=>markCard('yes'), 200);
@@ -333,47 +385,98 @@ function syncSeg(id, val) {
 function renderStats() {
   const body = document.getElementById('statsBody');
   if (body.style.display === 'none') return;
-  const ws = words();
-  const known = ws.filter(w => statusOf(w.id)==='known').length;
-  const total = ws.length;
-  const cats = {};
-  ws.forEach(w => {
-    cats[w.c] = cats[w.c]||{known:0,total:0};
-    cats[w.c].total++;
-    if (statusOf(w.id)==='known') cats[w.c].known++;
-  });
+  const allWords = Object.values(CHAPTERS).flatMap(ch => ch.words);
+  const totalKnown = allWords.filter(w => statusOf(w.id) === 'known').length;
+  const totalAll = allWords.length;
   let html =
     '<div class="stat-grid">' +
-      '<div class="mini-stat"><p>已精通</p><span>'+known+'</span></div>' +
-      '<div class="mini-stat"><p>總單字數</p><span>'+total+'</span></div>' +
+      '<div class="mini-stat"><p>全部已精通</p><span>' + totalKnown + '</span></div>' +
+      '<div class="mini-stat"><p>全部單字數</p><span>' + totalAll + '</span></div>' +
     '</div>';
-  Object.keys(cats).forEach(cat => {
-    const c = cats[cat], pct = c.total?Math.round(c.known/c.total*100):0;
-    html += '<div class="cat-row"><span class="cat-name">'+cat+'</span>'+
-      '<div class="mbar"><div class="mbar-fill" style="width:'+pct+'%"></div></div>'+
-      '<span class="cat-num">'+c.known+'/'+c.total+'</span></div>';
+  Object.keys(CHAPTERS).forEach(chk => {
+    const ch = CHAPTERS[chk];
+    const cats = {};
+    ch.words.forEach(w => {
+      cats[w.c] = cats[w.c]||{known:0,total:0};
+      cats[w.c].total++;
+      if (statusOf(w.id)==='known') cats[w.c].known++;
+    });
+    const chKnown = ch.words.filter(w => statusOf(w.id)==='known').length;
+    html += '<div class="ch-section">';
+    html += '<div class="ch-label">' + ch.label + '　' + chKnown + '/' + ch.words.length;
+    if (!ch.builtin) html += ' <button class="del-btn" data-chk="'+chk+'" title="刪除此章節">✕ 刪除</button>';
+    html += '</div>';
+    Object.keys(cats).forEach(cat => {
+      const c = cats[cat], pct = c.total ? Math.round(c.known/c.total*100) : 0;
+      html += '<div class="cat-row"><span class="cat-name">'+cat+'</span>'+
+        '<div class="mbar"><div class="mbar-fill" style="width:'+pct+'%"></div></div>'+
+        '<span class="cat-num">'+c.known+'/'+c.total+'</span></div>';
+    });
+    html += '</div>';
   });
   html += '<button class="exp-btn" id="expBtn">📋 產生學習摘要（貼給 Claude 分析）</button>';
-  html += '<textarea id="expArea" style="display:none" readonly></textarea>';
+  html += '<textarea class="exp-area" id="expArea" style="display:none" readonly></textarea>';
   body.innerHTML = html;
+  body.querySelectorAll('.del-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const k = this.dataset.chk;
+      if (!confirm('確定要刪除「' + CHAPTERS[k].label + '」嗎？學習進度不受影響。')) return;
+      const extra = loadExtraChapters();
+      delete extra[k];
+      saveExtraChapters(extra);
+      mergeChapters();
+      if (chKey === k) chKey = Object.keys(CHAPTERS)[0];
+      rebuildChapterSelect();
+      buildDeck();
+      renderStats();
+    });
+  });
   document.getElementById('expBtn').onclick = function() {
-    const ws2 = words();
-    const unk = ws2.filter(w => statusOf(w.id)!=='known');
-    let txt = '日文單字學習摘要\n';
-    txt += '產生時間：' + new Date().toLocaleString() + '\n';
-    txt += '章節：' + CHAPTERS[chKey].label + '\n\n';
-    txt += '已精通：' + known + ' / ' + total + '\n\n分類進度：\n';
-    Object.keys(cats).forEach(c => { txt += cats[c].known+'/'+cats[c].total+' '+c+'\n'; });
-    txt += '\n還沒記住的單字（'+unk.length+'個）：\n';
-    unk.forEach(w => { txt += '・'+w.k+(w.j?'（'+w.j+'）':'')+' → '+w.z+'\n'; });
+    let txt = '日文單字學習摘要\n產生時間：' + new Date().toLocaleString() + '\n\n';
+    txt += '全部已精通：' + totalKnown + ' / ' + totalAll + '\n\n';
+    Object.keys(CHAPTERS).forEach(chk => {
+      const ch = CHAPTERS[chk];
+      const unk = ch.words.filter(w => statusOf(w.id) !== 'known');
+      const known2 = ch.words.filter(w => statusOf(w.id) === 'known').length;
+      txt += '【' + ch.label + '】 ' + known2 + '/' + ch.words.length + '\n';
+      if (unk.length) {
+        txt += '  還沒記住：\n';
+        unk.forEach(w => { txt += '  ・' + w.k + (w.j?'（'+w.j+'）':'') + ' → ' + w.z + '\n'; });
+      }
+      txt += '\n';
+    });
     const area = document.getElementById('expArea');
-    area.style.display = 'block'; area.value = txt; area.select();
+    area.style.display='block'; area.value=txt; area.select();
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(txt).then(() => {
         document.getElementById('expBtn').textContent = '✓ 已複製！貼進對話框就能分析';
       });
     }
   };
+}
+
+function doImport() {
+  const raw = document.getElementById('importArea').value.trim();
+  const msg = document.getElementById('importMsg');
+  if (!raw) { msg.className='import-msg err'; msg.textContent='請先貼上 JSON 內容'; return; }
+  let data;
+  try { data = JSON.parse(raw); } catch(e) { msg.className='import-msg err'; msg.textContent='JSON 格式有誤，請重新確認'; return; }
+  if (!data.id || !data.label || !Array.isArray(data.words) || !data.words.length) {
+    msg.className='import-msg err'; msg.textContent='缺少 id、label 或 words 欄位'; return;
+  }
+  if (BUILTIN[data.id]) { msg.className='import-msg err'; msg.textContent='章節 id 與內建章節重複，請改一個名稱'; return; }
+  const extra = loadExtraChapters();
+  extra[data.id] = { label: data.label, words: data.words };
+  saveExtraChapters(extra);
+  mergeChapters();
+  rebuildChapterSelect();
+  chKey = data.id;
+  document.getElementById('chSel').value = chKey;
+  buildDeck();
+  if (statsOpen) renderStats();
+  document.getElementById('importArea').value = '';
+  msg.className='import-msg ok';
+  msg.textContent = '✓ 成功匯入「' + data.label + '」（' + data.words.length + ' 個單字）';
 }
 
 document.getElementById('statsHead').addEventListener('click', function(){
@@ -383,7 +486,12 @@ document.getElementById('statsHead').addEventListener('click', function(){
   document.getElementById('statsTog').textContent = statsOpen ? '收起 ▴' : '展開 ▾';
   if (statsOpen) renderStats();
 });
-
+document.getElementById('importHead').addEventListener('click', function(){
+  importOpen = !importOpen;
+  document.getElementById('importBody').style.display = importOpen ? 'block' : 'none';
+  document.getElementById('importTog').textContent = importOpen ? '收起 ▴' : '展開 ▾';
+});
+document.getElementById('importBtn').addEventListener('click', doImport);
 document.getElementById('scopeSeg').addEventListener('click', function(e){
   const b = e.target.closest('button'); if (!b) return;
   scope = b.dataset.v; syncSeg('scopeSeg', scope); buildDeck();
@@ -394,15 +502,12 @@ document.getElementById('frontSeg').addEventListener('click', function(e){
 });
 document.getElementById('btnNo').addEventListener('click', ()=>markCard('no'));
 document.getElementById('btnYes').addEventListener('click', ()=>markCard('yes'));
-
-const chSel = document.getElementById('chSel');
-Object.keys(CHAPTERS).forEach(k=>{
-  const o = document.createElement('option');
-  o.value=k; o.textContent=CHAPTERS[k].label; chSel.appendChild(o);
+document.getElementById('chSel').addEventListener('change', function(){
+  chKey = this.value; buildDeck(); if (statsOpen) renderStats();
 });
-chSel.value = chKey;
-chSel.addEventListener('change', function(){ chKey=this.value; buildDeck(); if(statsOpen)renderStats(); });
 
+mergeChapters();
+rebuildChapterSelect();
 prog = loadProg();
 buildDeck();
 </script>
